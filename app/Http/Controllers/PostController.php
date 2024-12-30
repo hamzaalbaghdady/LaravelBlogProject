@@ -12,6 +12,11 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Post::class, 'post');
+    }
+
     public function store(StorePostRequest $request)
     {
         $validated = $request->validated();
@@ -36,8 +41,9 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $posts = QueryBuilder::for(Post::class)
-            ->allowedSorts(['content', 'created_at'])
+            ->allowedSorts(['content', 'created_at', 'updated_at'])
             ->defaultSort('-created_at')
+            ->allowedFilters('creator_id')
             ->paginate();
         return new PostCollection($posts);
     }
